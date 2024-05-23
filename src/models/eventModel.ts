@@ -7,11 +7,11 @@ export interface IEvent extends Document {
     number_of_keebs: number;
     start_date: Date;
     end_date: Date;
-    rsvp_users: mongoose.Types.ObjectId[];
-    current_attendees: mongoose.Types.ObjectId[];
+    rsvp_users: Map<mongoose.Types.ObjectId, number>;
+    current_attendees: Map<mongoose.Types.ObjectId, number>;
     raffle_winners?: mongoose.Types.ObjectId[];
     is_active(): boolean;
-    rsvp_to_event(user: mongoose.Types.ObjectId, bringKeeb: boolean): string;
+    rsvp_to_event(user: mongoose.Types.ObjectId, raffle_slot: number, bring_keeb: boolean): Promise<string>;
 }
 
 const EventSchema: Schema<IEvent> = new Schema ({
@@ -31,12 +31,12 @@ EventSchema.method('is_active', function is_active(){
     return (this.end_date >= currentTime && currentTime >= this.start_date);
 });
 
-EventSchema.method('rsvp_to_event', async function is_active(user, bringKeeb){
+EventSchema.method('rsvp_to_event', async function is_active(user, raffle_slot, bring_keeb){
     let currentTime: Date = new Date();
     if (this.end_date >= currentTime) {
-        if (this.max_rsvps > this.rsvp_users.length) {
-            this.rsvp_users.push(user);
-            if (bringKeeb)
+        if (this.max_rsvps > this.rsvp_users.size) {
+            this.rsvp_users.set(user, raffle_slot);
+            if (bring_keeb)
                 this.number_of_keebs++;
             await this.save();
             return `Thank You for RSVPing. See you at ${this.name}`;
