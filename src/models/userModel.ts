@@ -50,14 +50,6 @@ UserSchema.methods.to_dict = function (): Record<string, any> {
   };
 };
 
-UserSchema.statics.update_events_attended = async function (userId: string, numEvents: number = 1): Promise<number> {
-  const result = await this.updateOne(
-    { _id: userId },
-    { $inc: { events_attended: numEvents } }
-  );
-  return result.modifiedCount;
-};
-
 UserSchema.statics.find_by_discord_id = async function (discordId: string): Promise<IUser | null> {
   const userDoc = await this.findOne({ discord_id: discordId });
   return userDoc;

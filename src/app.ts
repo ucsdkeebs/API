@@ -85,11 +85,5 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/', (req, res) => res.send('Hello, World!'));
-app.get('/dashboard', (req, res) => {
-  if (!req.isAuthenticated()) {
-    return res.redirect('/auth/discord');
-  }
-  res.send(`Welcome ${req.user}`);
-});
 
 export default app;
