@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 import User from '../models/userModel';
 
 export const createUser = async (req: Request, res: Response) => {
-  const { email, username, discord_id, profile_picture, ucsd_affiliation, pronouns, year, major } = req.body;
+  const { email, username, discord_id, ucsd_affiliation, pronouns, year, major } = req.body;
   try {
-    const user = new User({ email, username, discord_id, profile_picture, ucsd_affiliation, pronouns, year, major });
+    const user = new User({ email, username, discord_id, ucsd_affiliation, pronouns, year, major });
     const result = await user.save();
     res.status(201).json({ userId: result._id });
   } catch (error) {

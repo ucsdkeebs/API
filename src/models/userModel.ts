@@ -40,7 +40,6 @@ UserSchema.methods.to_dict = function (): Record<string, any> {
     email: this.email,
     username: this.username,
     discord_id: this.discord_id,
-    profile_picture: this.profile_picture,
     ucsd_affiliation: this.ucsd_affiliation,
     pronouns: this.pronouns,
     year: this.year,
