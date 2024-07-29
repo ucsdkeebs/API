@@ -53,14 +53,14 @@ passport.use(new DiscordStrategy({
 }, async (accessToken, refreshToken, profile, done) => {
   const { id, username, email, avatar } = profile;
   try {
-    let user = await User.findOne({ discordId: id });
+    let user = await User.findOne({ discord_id: id });
     if (user) {
       user.username = username;
       user.email = email || '';
       await user.save();
       done(null, user);
     } else {
-      const newUser = new User({ discordId: id, username, email, profilePicture: avatar });
+      const newUser = new User({ discord_id: id, username, email, profilePicture: avatar });
       await newUser.save();
       done(null, newUser);
     }
@@ -85,5 +85,11 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/', (req, res) => res.send('Hello, World!'));
+app.get('/dashboard', (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.redirect('/auth/discord');
+  }
+  res.send(`Welcome ${req.user}`);
+});
 
 export default app;

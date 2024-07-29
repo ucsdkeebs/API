@@ -1,11 +1,10 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IUser extends Document {
-  email: string; // do we need email and discord?
+  email: string;
   username: string;
-  discord_id: string;
-  //profile_picture?: string;
-  ucsd_affiliation: string;
+  discord_id?: string;
+  ucsd_affiliation?: string;
   pronouns?: string;
   year?: string;
   major?: string;
@@ -13,20 +12,25 @@ export interface IUser extends Document {
   events_attended: number;
   time_spent_at_events: number;
   get_id(): string;
+  to_dict(): Record<string, any>;
+}
+
+interface IUserModel extends Model<IUser> {
+  updateEventsAttended(userId: string, numEvents: number): Promise<number>;
+  findByDiscordId(discordId: string): Promise<IUser | null>;
 }
 
 const UserSchema: Schema<IUser> = new Schema({
   email: { type: String, required: true },
   username: { type: String, required: true },
-  discord_id: { type: String, required: true },
-  //profile_picture: { type: String }, //not sure we should be doing images and stuff
-  ucsd_affiliation: { type: String, required: true },
-  pronouns: { type: String }, //might need to change to gender identity
+  discord_id: { type: String },
+  ucsd_affiliation: { type: String },
+  pronouns: { type: String },
   year: { type: String },
-  major: { type: String }, //not sure if we're gonna collect this
+  major: { type: String },
   is_active: { type: Boolean, default: true, required: true },
   events_attended: { type: Number, default: 0 },
-  time_spent_at_events: {type: Number, default: 0, required: true}
+  time_spent_at_events: { type: Number, default: 0, required: true }
 }, {
   timestamps: true
 });
@@ -44,15 +48,15 @@ UserSchema.methods.to_dict = function (): Record<string, any> {
     pronouns: this.pronouns,
     year: this.year,
     major: this.major,
-    account_created_date: this.account_created_date,
+    account_created_date: this.createdAt,
     events_attended: this.events_attended,
   };
 };
 
-UserSchema.statics.find_by_discord_id = async function (discordId: string): Promise<IUser | null> {
+UserSchema.statics.findByDiscordId = async function (discordId: string): Promise<IUser | null> {
   const userDoc = await this.findOne({ discord_id: discordId });
   return userDoc;
 };
 
-const User = mongoose.model<IUser>('User', UserSchema);
+const User = mongoose.model<IUser, IUserModel>('User', UserSchema);
 export default User;

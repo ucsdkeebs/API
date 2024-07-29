@@ -3,10 +3,14 @@ import path from 'path';
 
 dotenv.config({ path: path.resolve(__dirname, './../../.env') });
 
-console.log("MONGODB_URI", process.env.MONGODB_URI);
+console.log("Loaded Environment Variables:");
+console.log("KEEBS_MONGODB_URI:", process.env.KEEBS_MONGODB_URI);
+console.log("PORT:", process.env.PORT);
 
-export default {
+const config = {
   port: process.env.PORT || 3000,
-  dbConnectionString: process.env.MONGODB_URI || '',
+  dbConnectionString: process.env.KEEBS_MONGODB_URI || '',
   // Other configurations
 };
+
+export default config;
