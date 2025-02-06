@@ -1,6 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import userRoutes from './routes/userRoutes';
+import eventRoutes from './routes/eventRoutes';
+import ticketRoutes from './routes/ticketRoutes';
 import errorHandler from './middlewares/errorHandler';
 import session from 'express-session';
 import passport from 'passport';
@@ -69,7 +71,9 @@ passport.use(new DiscordStrategy({
   }
 }));
 
-app.use('/api', userRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/event', eventRoutes);
+app.use('/api/ticket', ticketRoutes);
 
 app.get('/auth/discord', passport.authenticate('discord'));
 app.get('/auth/discord/callback', passport.authenticate('discord', {
