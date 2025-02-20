@@ -24,11 +24,10 @@ describe('User Routes', () => {
     });
     it('should create a user and return userId', async () => {
       const res = await request(app)
-        .post('/api/user/create-user')
+        .post('/api/users/create-user')
         .send({
           email: 'test@example.com',
           username: 'testuser',
-          discord_id: '123456',
           ucsd_affiliation: 'student',
           pronouns: 'they/them',
           year: 2025,
@@ -36,10 +35,11 @@ describe('User Routes', () => {
         });
       expect(res.status).toBe(201);
       expect(res.body).toHaveProperty('userId', 'test-user-id');
+      console.log(res.body);
     });
   });
 
-  describe('GET /api/user/get-users', () => {
+  describe('GET /api/users/get-users', () => {
     beforeEach(() => {
       // Stub User.find to return a fake list of users.
       vi.spyOn(User, 'find').mockResolvedValue([
@@ -52,7 +52,7 @@ describe('User Routes', () => {
     });
     it('should return all users', async () => {
       // Note the corrected endpoint path here:
-      const res = await request(app).get('/api/user/get-users');
+      const res = await request(app).get('/api/users/get-users');
       expect(res.status).toBe(200);
       expect(Array.isArray(res.body)).toBe(true);
       expect(res.body).toHaveLength(2);
@@ -64,7 +64,7 @@ describe('User Routes', () => {
 // Ticket Routes Tests
 // -------------------------------------------------------------------
 describe('Ticket Routes', () => {
-  describe('POST /api/ticket/create', () => {
+  describe('POST /api/tickets/create', () => {
     beforeEach(() => {
       // Stub createTicketService so that it returns a fake ticket.
       (createTicketService as any).mockResolvedValue({ _id: 'test-ticket-id' });
@@ -81,12 +81,12 @@ describe('Ticket Routes', () => {
         last_name: 'Doe',
         keyboards: ['keyboard1'],
         gender_identity: 'male',
-        from_where: 'USA',
+        from_where: 'Discord',
         expected_spend: 100,
         checked_in: false
       };
       const res = await request(app)
-        .post('/api/ticket/create')
+        .post('/api/tickets/create')
         .send(payload);
       expect(res.status).toBe(201);
       expect(res.body).toHaveProperty('ticketId', 'test-ticket-id');
@@ -98,7 +98,7 @@ describe('Ticket Routes', () => {
 // Event Routes Tests
 // -------------------------------------------------------------------
 describe('Event Routes', () => {
-  describe('GET /api/event/all', () => {
+  describe('GET /api/events/all', () => {
     beforeEach(() => {
       // Stub Event.find to return a fake list of events.
       vi.spyOn(Event, 'find').mockResolvedValue([
@@ -111,14 +111,14 @@ describe('Event Routes', () => {
     });
     it('should return all events', async () => {
       // Corrected endpoint:
-      const res = await request(app).get('/api/event/all');
+      const res = await request(app).get('/api/events/all');
       expect(res.status).toBe(200);
       expect(Array.isArray(res.body)).toBe(true);
       expect(res.body).toHaveLength(2);
     });
   });
 
-  describe('GET /api/event/get-active', () => {
+  describe('GET /api/events/get-active', () => {
     beforeEach(() => {
       // Create fake events with an is_active method.
       const activeEvent = { _id: 'event-active', name: 'Active Event', is_active: () => true };
@@ -130,7 +130,7 @@ describe('Event Routes', () => {
     });
     it('should return only active events', async () => {
       // Corrected endpoint:
-      const res = await request(app).get('/api/event/get-active');
+      const res = await request(app).get('/api/events/get-active');
       expect(res.status).toBe(200);
       expect(Array.isArray(res.body)).toBe(true);
       // Only the active event should be returned.
@@ -139,7 +139,7 @@ describe('Event Routes', () => {
     });
   });
 
-  describe('POST /api/event/create', () => {
+  describe('POST /api/events/create', () => {
     beforeEach(() => {
       // Stub the save method on an Event instance.
       vi.spyOn(Event.prototype, 'save').mockResolvedValue({ _id: 'new-event-id', name: 'New Event' } as any);
@@ -156,14 +156,14 @@ describe('Event Routes', () => {
         end_date: new Date(Date.now() + 3600000).toISOString() // one hour later
       };
       const res = await request(app)
-        .post('/api/event/create')
+        .post('/api/events/create')
         .send(payload);
       expect(res.status).toBe(201);
       expect(res.body).toHaveProperty('name', 'New Event');
     });
   });
 
-  describe('POST /api/event/rsvp', () => {
+  describe('POST /api/events/rsvp', () => {
     beforeEach(() => {
       // Stub Event.findById to return a fake event with the expected methods.
       const fakeEvent = {
@@ -191,7 +191,7 @@ describe('Event Routes', () => {
         keyboardData: {}
       };
       const res = await request(app)
-        .post('/api/event/rsvp')
+        .post('/api/events/rsvp')
         .send(payload);
       expect(res.status).toBe(200);
       expect(res.body).toHaveProperty('message', 'RSVP successful');
