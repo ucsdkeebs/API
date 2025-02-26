@@ -41,3 +41,17 @@ export const checkInToEvent = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Error checking in.', error})
   }
 };
+
+export const deleteUser = async (req: Request, res: Response) => {
+  const { uid } = req.body;
+
+  try {
+    const result = await User.deleteOne({uid: uid});
+
+    if (!result) {
+      return res.status(400).json({ message: 'No user found.' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting user.', error})
+  }
+};
