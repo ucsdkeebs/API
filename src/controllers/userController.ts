@@ -1,13 +1,22 @@
 import { Request, Response } from 'express';
+import admin from 'firebase-admin';
 import User from '../models/userModel';
 import Ticket from '../models/ticketModel';
 
 export const createUser = async (req: Request, res: Response) => {
-  const { email, username, ucsd_affiliation, pronouns, year, major } = req.body;
+  const { token, email, username, ucsd_affiliation, pronouns, year, major } = req.body;
   try {
-    const user = new User({ email, username, ucsd_affiliation, pronouns, year, major });
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    const uid = decodedToken.uid;
+
+    const existingUser = await User.findOne({ uid });
+    if (existingUser) {
+      return res.status(400).json({ error: 'User already exists' });
+    }
+
+    const user = new User({ uid, email, username, ucsd_affiliation, pronouns, year, major });
     const result = await user.save();
-    res.status(201).json({ userId: result._id });
+    res.status(201).json({ user: result });
   } catch (error) {
     res.status(500).json({ error: 'Error creating user' });
   }

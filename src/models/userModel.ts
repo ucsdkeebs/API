@@ -20,7 +20,8 @@ interface IUserModel extends Model<IUser> {
 const UserSchema: Schema<IUser> = new Schema({
   email: { type: String, required: true },
   username: { type: String, required: true },
-  ucsd_affiliation: { type: String },
+  uid: { type: String, required: true, unique: true },
+  ucsd_affiliation: { type: Boolean },
   pronouns: { type: String },
   year: { type: String },
   major: { type: String },
