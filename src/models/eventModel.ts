@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import Ticket from './ticketModel';
 
 //Interface for Events
 export interface IEvent extends Document {
@@ -39,8 +40,7 @@ EventSchema.method('is_active', function is_active(){
 // Method to rsvp_to_event creating ticket, returns a string on if the rsvp was succesful
 EventSchema.method('rsvp_to_event', async function rsvp_to_event(
     user: mongoose.Types.ObjectId,  
-    raffle_slot: number,
-    keyboards: mongoose.Types.ObjectId[],
+    ticketList: any[]
 ): Promise<String> {
     // checks if the event is over to prevent late rsvps
     let currentTime: Date = new Date();
@@ -52,31 +52,49 @@ EventSchema.method('rsvp_to_event', async function rsvp_to_event(
     await this.populate('tickets');
 
     // load checks if the event has had max rsvps
-    if (this.tickets.length) {
-        return `Sorry, ${this.name} has reached the maximum number of RSVPs.`;
-    }
-
-    // check if the raffle slot has full tickets
-    const raffleSlotRsvps = this.tickets.filter(ticket =>
-        (ticket as any).raffle_slot.equals(raffle_slot)
-    )
-    if (raffleSlotRsvps.length >= this.slot_limit) {
-        return `Sorry, Raffle Slot ${raffle_slot} has reached the maximum number of rsvps, please choose another Raffle Slot`
-    }
+    if (this.tickets.length + ticketList.length > this.max_rsvps) {
+        if (this.max_rsvps - this.tickets.length === 0) {
+            return "Sorry this event is full and is no longer accepting rsvps."
+        }
+        return `Sorry, ${this.name} has only ${this.max_rsvps - this.tickets.length} slots left and you rsvped for ${ticketList.length} tickets.`;
+    } 
 
     // checks if the user has rsvped the max number of times
     const existingRsvps = this.tickets.filter(ticket => 
         (ticket as any).ownerId.equals(user)
     );
-
     if (existingRsvps.length >= this.ticket_limit) {
         return 'You have reached the maximum number of tickets for this event.'
     }
-    
-    await this.save();
 
-    if (keyboards)
-        this.number_of_keebs += keyboards.length;
+    let newTickets = [];
+
+    for (const ticketData of ticketList) {
+        // check if the raffle slot has full tickets
+        const raffleSlotRsvps = this.tickets.filter(ticket =>
+            (ticket as any).raffle_slot.equals(ticketData.raffle_slot)
+        )
+        if (raffleSlotRsvps.length >= this.slot_limit) {
+            return `Sorry, Raffle Slot ${ticketData.raffle_slot} has reached the maximum number of rsvps, please choose another Raffle Slot`
+        }
+
+        const newTicket = new Ticket({
+            ownerId: user,
+            eventId: this._id,
+            first_name: ticketData.first_name,
+            last_name: ticketData.last_name,
+            gender_identity: ticketData.gender_identity,
+            from_where: ticketData.from_where,
+            expected_spend: ticketData.expected_spend,
+            raffle_slot: ticketData.raffle_slot,
+            checked_in: false
+        });
+
+        newTickets.push(newTicket);
+    }
+
+    // insert at once, since its more efficient
+    const savedTickets = await Ticket.insertMany(newTickets);
     
     await this.save();
     // successful rsvp

@@ -6,13 +6,12 @@ import { createTicketService } from '../services/ticketServices';
 export const createTicket = async (
   req: Request, res: Response
 ) => {
-    const { ticket_number, ownerId, eventId, first_name, last_name, keyboards, gender_identity, from_where, expected_spend, checked_in } = req.body;
+    const { ownerId, eventId, first_name, last_name, keyboards, gender_identity, from_where, expected_spend, checked_in } = req.body;
     try {
       const ticket = await createTicketService(
         ownerId, 
         eventId,
         { 
-          ticket_number, 
           ownerId, eventId, 
           first_name, 
           last_name, 
@@ -22,7 +21,7 @@ export const createTicket = async (
           expected_spend, 
           checked_in 
         },
-        keyboards
+        //keyboards
       );
 
       res.status(201).json({ ticketId: ticket._id });

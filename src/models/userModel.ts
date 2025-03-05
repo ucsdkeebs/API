@@ -3,7 +3,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 export interface IUser extends Document {
   email: string;
   username: string;
-  ucsd_affiliation?: string;
+  ucsd_affiliation?: boolean;
   pronouns?: string;
   year?: string;
   major?: string;
@@ -20,7 +20,7 @@ interface IUserModel extends Model<IUser> {
 const UserSchema: Schema<IUser> = new Schema({
   email: { type: String, required: true },
   username: { type: String, required: true },
-  ucsd_affiliation: { type: String },
+  ucsd_affiliation: { type: Boolean },
   pronouns: { type: String },
   year: { type: String },
   major: { type: String },
