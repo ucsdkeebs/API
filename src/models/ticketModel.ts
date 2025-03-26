@@ -19,6 +19,7 @@
         first_name: {type: String, required: true},
         last_name: {type: String, required: true },
         //keyboards: [{type: mongoose.Schema.Types.ObjectId, ref: 'Keyboard', required: true, default: []}],
+        gender_identity: {type: String, required: true},
         from_where: {type: String, required: true},
         expected_spend: {type: String, required: true},
         checked_in: {type: Boolean, required: true, default: false},

@@ -23,9 +23,17 @@ export const createTicketService = async (
             raffle_slot: ticketData.raffle_slot,
             checked_in: false
         });
+
+        console.log('creating ticket!');
+
         const savedTicket = await newTicket.save();
+
+        console.log('ticket created succesfully!');
+        console.log(newTicket);
+
         return savedTicket;
     } catch (error) {
+        console.log(error);
         throw new Error('failed to create a ticket ' + (error as Error).message);
     }
 }

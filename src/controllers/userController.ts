@@ -3,11 +3,26 @@ import User from '../models/userModel';
 import Ticket from '../models/ticketModel';
 
 export const createUser = async (req: Request, res: Response) => {
-  const { email, username, ucsd_affiliation, pronouns, year, major } = req.body;
   try {
-    const user = new User({ email, username, ucsd_affiliation, pronouns, year, major });
+    const data = {
+      email: req.body.email,
+      username: req.body.username,
+      ucsd_affiliation: req.body.ucsd_affiliation,
+      pronouns: req.body.pronouns,
+      year: req.body.year,
+      major: req.body.major,
+      uid: req.body.uid,
+      admin: req.body.admin
+    };
+
+    Object.keys(data).forEach((key) => {
+      const typedKey = key as keyof typeof data;
+      if (data[typedKey] === undefined) delete data[typedKey];
+    });
+
+    const user = new User(data);
     const result = await user.save();
-    res.status(201).json({ userId: result._id });
+    res.status(201).json({ user: result });
   } catch (error) {
     res.status(500).json({ error: 'Error creating user' });
   }
