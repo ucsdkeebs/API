@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env.test' });
 
-import { describe, it, beforeEach, afterEach, expect } from 'vitest';
+import { describe, it, beforeEach, afterAll, expect } from 'vitest';
 import request from 'supertest';
 import mongoose from 'mongoose';
 import app from '../src/app';
@@ -54,7 +54,7 @@ beforeEach(async () => {
     expect(eventId).toBeTruthy();
 });
 
-afterEach(async () => {
+afterAll(async () => {
     await mongoose.connection.close();
 });
 
@@ -80,5 +80,53 @@ describe('RSVP Flow', () => {
         // Verify the RSVP is stored in the database
         const ticket = await TicketModel.findOne({ ownerId: userId, eventId: eventId });
         expect(ticket).toBeTruthy();
+    });
+
+    it('should block users from rsvping to an event if they request too many tickets', async () => {
+        const rsvpResponse = await request(app)
+            .post(`/api/events/${eventId}/rsvp`)
+            .send({ 
+                userId: userId,
+                ticketData: [{
+                    first_name: "Jane",
+                    last_name: 'Doe',
+                    gender_identity: 'she/her',
+                    from_where: 'discord',
+                    expected_spend: '$20',
+                    raffle_slot: 2
+                }, {
+                    first_name: "John",
+                    last_name: 'Doe',
+                    gender_identity: 'he/him',
+                    from_where: 'discord',
+                    expected_spend: '$20',
+                    raffle_slot: 1
+                }, {
+                    first_name: "Jimmy",
+                    last_name: 'Doe',
+                    gender_identity: 'he/him',
+                    from_where: 'discord',
+                    expected_spend: '$20',
+                    raffle_slot: 1
+                }, {
+                    first_name: "Johnathan",
+                    last_name: 'Doe',
+                    gender_identity: 'he/him',
+                    from_where: 'discord',
+                    expected_spend: '$20',
+                    raffle_slot: 2
+                }, {
+                    first_name: "Jill",
+                    last_name: 'Doe',
+                    gender_identity: 'she/her',
+                    from_where: 'discord',
+                    expected_spend: '$20',
+                    raffle_slot: 2
+                },
+                ]
+             });
+
+        expect(rsvpResponse.status).toBe(400);
+        //expect(rsvpResponse.body.message).toBe('RSVP successful');
     });
 });
