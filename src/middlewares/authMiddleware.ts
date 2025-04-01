@@ -16,7 +16,7 @@ const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
     
     // if its a new user send them to a page to fill out their information
     if (!existingUser) {
-      return res.status(200).json({ redirect: '/new-user-registration'});
+      return res.status(200).json({ redirect: '/register'});
     }
 
     req.user = existingUser;
