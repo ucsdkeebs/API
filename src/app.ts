@@ -20,8 +20,6 @@ import connectDB from './config/db';
 //firebase
 import './config/firebaseConfig';
 
-const PORT = process.env.PORT || 5000;
-
 dotenv.config();
 
 const app = express();
