@@ -25,7 +25,7 @@ const UserSchema: Schema<IUser> = new Schema({
   pronouns: { type: String },
   year: { type: String },
   major: { type: String },
-  uid: { type: String},
+  uid: { type: String, required: true, unique: true},
   admin: {type: Boolean, default: false},
   //is_active: { type: Boolean, default: true, required: true },
   events_attended: { type: Number, default: 0 },
