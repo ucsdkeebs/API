@@ -5,6 +5,7 @@ import Ticket from '../models/ticketModel';
 
 export const createUser = async (req: Request, res: Response) => {
   const { token, email, username, ucsd_affiliation, pronouns, year, major } = req.body;
+
   try {
     const decodedToken = await admin.auth().verifyIdToken(token);
     const uid = decodedToken.uid;

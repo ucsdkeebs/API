@@ -13,8 +13,8 @@ router.get('/all', getAllEvents);
 
 router.get('/get-active', getActiveEvents);
 
-router.post('/create', createEvent);
+router.post('/create-event', createEvent);
 
-router.post('/rsvp', rsvpToEvent);
+router.post('/:eventId/rsvp', rsvpToEvent);
 
 export default router;

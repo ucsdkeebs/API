@@ -3,13 +3,14 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 export interface IUser extends Document {
   email: string;
   username: string;
-  ucsd_affiliation?: string;
+  ucsd_affiliation?: boolean;
   pronouns?: string;
   year?: string;
   major?: string;
   events_attended: number;
   time_spent_at_events: number;
   uid: string;
+  admin: boolean;
   to_dict(): Record<string, any>;
 }
 
@@ -25,6 +26,7 @@ const UserSchema: Schema<IUser> = new Schema({
   pronouns: { type: String },
   year: { type: String },
   major: { type: String },
+  admin: {type: Boolean, default: false},
   //is_active: { type: Boolean, default: true, required: true },
   events_attended: { type: Number, default: 0 },
   time_spent_at_events: { type: Number, default: 0, required: true }
