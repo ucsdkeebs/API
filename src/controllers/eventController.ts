@@ -31,7 +31,9 @@ export const createEvent = async (req: Request, res: Response) => {
       start_date: req.body.start_date,
       end_date: req.body.end_date,
       slot_limit: req.body.slot_limit,
-      num_slots: req.body.num_slots
+      num_slots: req.body.num_slots,
+      description: req.body.description,
+      image_link: req.body.image_link
     };
 
     const event = new Event(data);
@@ -45,37 +47,6 @@ export const createEvent = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Error creating event' });
   }
 };
-
-// export const rsvpToEvent = async (req: Request, res: Response) => {
-//     const { eventId } = req.params;
-
-//     const { userId, ticketData, keyboardData } = req.body;
-//     try {
-//         const event = await Event.findById(eventId);
-//         if (!event) {
-//             return res.status(404).json({ error: 'Event not found' });
-//         }
-        
-//         console.log('event found');
-
-//         const responseMessage = await event.rsvp_to_event(userId, ticketData.raffle_slot, ticketData.keyboards);
-
-//         console.log('rsvp event success');
-
-//         const objectId = new mongoose.Types.ObjectId(eventId);
-//         const newTicket = await createTicketService(objectId, userId, ticketData/*, keyboardData*/);
-
-//         console.log('ticket created successfully');
-
-//         //update event with new list of valid tickets
-//         event.tickets.push(newTicket._id as mongoose.Types.ObjectId);
-//         await event.save();
-        
-//         res.status(200).json({ message: responseMessage });
-//     } catch (error) {
-//         res.status(500).json({ error: 'Error processing RSVP' });
-//     }
-// };
 
 export const rsvpToEvent = async (req: Request, res: Response) => {
 
