@@ -12,6 +12,9 @@ export interface IEvent extends Document {
     raffle_winners?: mongoose.Types.ObjectId[];
     ticket_limit: number;
     slot_limit: number;
+    num_slots: number;
+    description: string;
+    image_link: string;
     is_active(): boolean;
     rsvp_to_event(user: mongoose.Types.ObjectId, raffle_slot: number, keyboards: mongoose.Types.ObjectId[]): Promise<string>;
 }
@@ -27,7 +30,10 @@ const EventSchema: Schema<IEvent> = new Schema ({
     tickets: [{type: mongoose.Schema.Types.ObjectId, ref: 'Ticket', default: []}],
     raffle_winners: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Ticket', default: []}],
     ticket_limit: {type: Number, required: false, default: 5},
-    slot_limit: {type: Number, required: true}
+    slot_limit: {type: Number, required: true, default: 100},
+    num_slots: {type: Number, required: true},
+    description: {type: String, required: false},
+    image_link: {type: String, required: false}
 })
 
 // Method to check if an event is currently active or not based on time
