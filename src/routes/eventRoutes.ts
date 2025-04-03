@@ -4,7 +4,8 @@ import {
     getAllEvents,
     getActiveEvents,
     createEvent,
-    rsvpToEvent
+    rsvpToEvent,
+    getUserTicketsForEvent
 } from '../controllers/eventController';
 
 const router = Router();
@@ -12,6 +13,8 @@ const router = Router();
 router.get('/all', getAllEvents);
 
 router.get('/get-active', getActiveEvents);
+
+router.post('/get-user-tickets', getUserTicketsForEvent);
 
 router.post('/create-event', createEvent);
 

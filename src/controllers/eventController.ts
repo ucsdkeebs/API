@@ -38,8 +38,6 @@ export const createEvent = async (req: Request, res: Response) => {
 
     const event = new Event(data);
 
-    console.log(event);
-
     const result = await event.save();
     console.log('event saved');
     res.status(201).json({ event: result });
@@ -86,8 +84,8 @@ export const rsvpToEvent = async (req: Request, res: Response) => {
             });
         }
 
-        const eventObjectId = new mongoose.Types.ObjectId(eventId);
-        const userObjectId = new mongoose.Types.ObjectId(userId)
+        const eventObjectId = mongoose.Types.ObjectId.createFromHexString(eventId);
+        const userObjectId = mongoose.Types.ObjectId.createFromHexString(userId);
     
         const createdTickets = [];
         for (let i = 0; i < ticketData.length; i++) {
@@ -95,11 +93,40 @@ export const rsvpToEvent = async (req: Request, res: Response) => {
             //new TicketModel({ event: eventId, ownerId: userId });
             await ticket.save();
             createdTickets.push(ticket);
-
+            event.tickets.push(ticket._id as mongoose.Types.ObjectId);
         }
+
+        await event.save();
    
         res.status(200).json({ message: 'RSVP successful', tickets: createdTickets });
         } catch (err) {
         res.status(500).json({ error: err });
         }
+  };
+
+  export const getUserTicketsForEvent = async (req: Request, res: Response) => {
+    try {
+      const { userId, eventId } = req.body;
+  
+      if (!mongoose.Types.ObjectId.isValid(eventId) || !mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(400).json({ error: 'Invalid user ID or event ID' });
+      }
+  
+      const event = await Event.findById(eventId).populate('tickets');
+      if (!event) {
+        return res.status(404).json({ error: 'Event not found' });
+      }
+  
+      const userTickets = event.tickets.filter((ticket: any) => ticket.ownerId.toString() === userId);
+      
+      if (userTickets.length === 0) {
+        return res.status(404).json({ error: 'No tickets found for this user' });
+      }
+  
+      res.status(200).json({ tickets: userTickets });
+  
+    } catch (error) {
+      console.error('Error retrieving user tickets:', error);
+      res.status(500).json({ error: 'Error retrieving user tickets' });
+    }
   };
