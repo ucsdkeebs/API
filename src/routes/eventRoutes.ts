@@ -4,7 +4,8 @@ import {
     getAllEvents,
     getActiveEvents,
     createEvent,
-    rsvpToEvent
+    rsvpToEvent,
+    getUserTicketsForEvent
 } from '../controllers/eventController';
 
 const router = Router();
