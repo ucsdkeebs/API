@@ -1,25 +1,25 @@
-import { Request, Response } from 'express';
-import Event from '../models/eventModel';
-import mongoose from 'mongoose';
-import { createTicketService } from '../services/ticketServices';
+import { Request, Response } from "express";
+import Event from "../models/eventModel";
+import mongoose from "mongoose";
+import { createTicketService } from "../services/ticketServices";
 
 export const getAllEvents = async (req: Request, res: Response) => {
-    try {
-        const events = await Event.find();
-        res.status(200).json(events);
-    } catch (error) {
-        res.status(500).json({ error: 'Error retrieving users' });
-    }
+  try {
+    const events = await Event.find();
+    res.status(200).json(events);
+  } catch (error) {
+    res.status(500).json({ error: "Error retrieving users" });
+  }
 };
 
 export const getActiveEvents = async (req: Request, res: Response) => {
-    try {
-        const allEvents = await Event.find();
-        const activeEvents = allEvents.filter(event => event.is_active());
-        res.status(200).json(activeEvents);
-    } catch (error) {
-        res.status(500).json({ error: 'Error retrieving users' });
-    }
+  try {
+    const allEvents = await Event.find();
+    const activeEvents = allEvents.filter((event) => event.is_active());
+    res.status(200).json(activeEvents);
+  } catch (error) {
+    res.status(500).json({ error: "Error retrieving users" });
+  }
 };
 
 export const createEvent = async (req: Request, res: Response) => {
@@ -37,8 +37,6 @@ export const createEvent = async (req: Request, res: Response) => {
     };
 
     const event = new Event(data);
-
-    console.log(event);
 
     const result = await event.save();
     console.log('event saved');
@@ -86,8 +84,8 @@ export const rsvpToEvent = async (req: Request, res: Response) => {
             });
         }
 
-        const eventObjectId = new mongoose.Types.ObjectId(eventId);
-        const userObjectId = new mongoose.Types.ObjectId(userId)
+        const eventObjectId = mongoose.Types.ObjectId.createFromHexString(eventId);
+        const userObjectId = mongoose.Types.ObjectId.createFromHexString(userId);
     
         const createdTickets = [];
         for (let i = 0; i < ticketData.length; i++) {
@@ -95,8 +93,10 @@ export const rsvpToEvent = async (req: Request, res: Response) => {
             //new TicketModel({ event: eventId, ownerId: userId });
             await ticket.save();
             createdTickets.push(ticket);
-
+            event.tickets.push(ticket._id as mongoose.Types.ObjectId);
         }
+
+        await event.save();
    
         res.status(200).json({ message: 'RSVP successful', tickets: createdTickets });
         } catch (err) {
