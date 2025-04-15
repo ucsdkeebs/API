@@ -65,7 +65,10 @@ export const getAllTickets = async (req: Request, res: Response) => {
       return res.status(403).json({ error: 'Unauthorized. Admin access required.' });
     }
 
-    const tickets = await Ticket.find();
+    const tickets = await Ticket.find()
+      .populate({ path: "eventId", select: "name" })
+      .populate({ path: "ownerId", select: "email" });
+      
     res.status(200).json({ tickets });
   } catch (error) {
     res.status(500).json({ error: 'Error fetching tickets' });
