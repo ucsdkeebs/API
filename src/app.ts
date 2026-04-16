@@ -8,6 +8,7 @@ import userRoutes from './routes/userRoutes';
 import ticketRoutes from './routes/ticketRoutes';
 import eventRoutes from './routes/eventRoutes';
 import keyboardRoutes from './routes/keyboardRoutes';
+import ticketTailorRoutes from './routes/webHooks/ticketTailorRoutes';
 
 import errorHandler from './middlewares/errorHandler';
 import session from 'express-session';
@@ -28,16 +29,20 @@ app.use(cors({
     origin: '*',
     credentials: true
   }));
-app.use(express.json());
+app.use(express.json({
+  verify: (req, _res, buf) => {
+    req.rawBody = buf.toString("utf8");
+  }
+}));
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 
 //mounts routes to prefix
-app.use(bodyParser.json());
 app.use('/api/users', userRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/keyboards', keyboardRoutes);
+app.use('/api/webhooks/ticketTailor', ticketTailorRoutes);
 
 app.use(errorHandler);
 

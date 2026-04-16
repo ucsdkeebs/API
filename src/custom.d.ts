@@ -5,3 +5,9 @@ declare module 'express-session' {
     temporaryUserInfo: any;
   }
 }
+
+declare module 'http' {
+  interface IncomingMessage {
+    rawBody?: Buffer | string;
+  }
+}
