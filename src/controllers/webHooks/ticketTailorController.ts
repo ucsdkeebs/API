@@ -4,6 +4,7 @@ import TicketTailorTicket from "../../models/ticketTailorTicketModel";
 
 const addCheckedInTicket = async (req: Request, res: Response) => {
     try {
+        console.log("Ticket Tailor webhook payload:", req.body);
         const { id, event, payload } = req.body;
 
         //make sure to only add when an already issued ticket is updated
