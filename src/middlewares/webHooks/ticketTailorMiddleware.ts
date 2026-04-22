@@ -3,7 +3,7 @@ import { verifyTicketTailorSignature } from '@/utils/ticketTailorSignature';
 import { sign } from 'crypto';
 
 export function ticketTailorWebhookAuth(req: any, res: any, next: any) {
-    const header = req.get("TicketTailor-Webhook-Sginature");
+    const header = req.get("TicketTailor-Webhook-Signature");
     const secret = process.env.TICKETTAILOR_WEBHOOK_SECRET;
 
     const result = verifyTicketTailorSignature({
