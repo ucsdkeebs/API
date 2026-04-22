@@ -45,7 +45,7 @@ async function get_order_info() {
         }
     );
 
-    console.log(res.data.issued_tickets[0].custom_questions);
+    console.log(res.data.issued_tickets[0].custom_questions[0].answer);
 }
 
 // async function get_ticket_info() {
@@ -54,8 +54,8 @@ async function get_order_info() {
 //     )
 // }
 
-get_event_info();
+//get_event_info();
 
-//get_order_info();
+get_order_info();
 
 //console.log('\n\n\n----------------------\n\n\n');
