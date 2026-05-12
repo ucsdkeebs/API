@@ -11,6 +11,7 @@
         expected_spend: string;
         checked_in: boolean;
         raffle_slot: number;
+        won: boolean;
     }
 
     const TicketSchema: Schema<ITicket> = new Schema ({
@@ -23,7 +24,8 @@
         from_where: {type: String, required: true},
         expected_spend: {type: String, required: true},
         checked_in: {type: Boolean, required: true, default: false},
-        raffle_slot: {type: Number, required: true}
+        raffle_slot: {type: Number, required: true},
+        won: {type: Boolean, required: true, default: false}
     })
 
     const Ticket = mongoose.model<ITicket>('Ticket', TicketSchema);

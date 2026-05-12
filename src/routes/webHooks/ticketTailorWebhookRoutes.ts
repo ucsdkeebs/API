@@ -1,6 +1,6 @@
 import { ticketTailorWebhookAuth } from '@/middlewares/webHooks/ticketTailorMiddleware';
 import { Router } from 'express';
-import addCheckedInTicket from '../../controllers/webHooks/ticketTailorController';
+import { addCheckedInTicket } from '../../controllers/webHooks/ticketTailorController';
 
 const router = Router();
 

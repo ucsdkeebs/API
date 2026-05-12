@@ -8,7 +8,8 @@ import userRoutes from './routes/userRoutes';
 import ticketRoutes from './routes/ticketRoutes';
 import eventRoutes from './routes/eventRoutes';
 import keyboardRoutes from './routes/keyboardRoutes';
-import ticketTailorRoutes from './routes/webHooks/ticketTailorRoutes';
+import ticketTailorWebhookRoutes from './routes/webHooks/ticketTailorWebhookRoutes';
+import ticketTailorRoutes from './routes/ticketTailorRoutes';
 
 import errorHandler from './middlewares/errorHandler';
 import session from 'express-session';
@@ -42,7 +43,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/keyboards', keyboardRoutes);
-app.use('/api/webhooks/ticketTailor', ticketTailorRoutes);
+app.use('/api/ticketTailor', ticketTailorRoutes)
+app.use('/api/webhooks/ticketTailorWebhook', ticketTailorWebhookRoutes);
 
 app.use(errorHandler);
 

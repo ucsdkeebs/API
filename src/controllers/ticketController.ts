@@ -7,7 +7,7 @@ import { createTicketService } from '../services/ticketServices';
 export const createTicket = async (
   req: Request, res: Response
 ) => {
-    const { ownerId, eventId, first_name, last_name, keyboards, gender_identity, from_where, expected_spend, checked_in } = req.body;
+    const { ownerId, eventId, first_name, last_name, keyboards, gender_identity, from_where, expected_spend, checked_in, won } = req.body;
     try {
       const ticket = await createTicketService(
         ownerId, 
@@ -20,7 +20,8 @@ export const createTicket = async (
           gender_identity, 
           from_where, 
           expected_spend, 
-          checked_in 
+          checked_in,
+          won 
         },
         //keyboards
       );

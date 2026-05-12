@@ -1,7 +1,9 @@
 import {Request, Response} from "express";
 
+import User from '@/models/userModel';
 import TicketTailorTicket from "../../models/ticketTailorTicketModel";
 
+//helper method to get raffle slot from custom question in TicketTailor
 const parseRaffleSlot = (payload: any): number | null => {
     const customQuestions = payload?.custom_questions;
     if (!Array.isArray(customQuestions)) {
@@ -22,7 +24,8 @@ const parseRaffleSlot = (payload: any): number | null => {
     return slotMatch ? Number(slotMatch[0]) : null;
 }
 
-const addCheckedInTicket = async (req: Request, res: Response) => {
+// should only be valid for urls from tickettailor
+export const addCheckedInTicket = async (req: Request, res: Response) => {
     try {
         console.log("Ticket Tailor webhook payload:", req.body);
         const { id, event, payload } = req.body;
@@ -39,10 +42,10 @@ const addCheckedInTicket = async (req: Request, res: Response) => {
         }
 
         //skips if ticket is not checked in
-        const checkedIn = payload.checked_in;
-        if (!checkedIn) {
-            return res.status(200);
-        }
+        // const checkedIn = payload.checked_in;
+        // if (!checkedIn) {
+        //     return res.status(200);
+        // }
 
         await TicketTailorTicket.updateOne(
             { ticketTailorId: ticketId },
@@ -52,15 +55,49 @@ const addCheckedInTicket = async (req: Request, res: Response) => {
                 email: payload.email,
                 full_name: payload.full_name,
                 checked_in: payload.checked_in,
-                raffle_slot: parseRaffleSlot(payload)
+                raffle_slot: parseRaffleSlot(payload),
+                won: false
             },
             {upsert: true}
         );
 
         return res.status(200);
     } catch {
-        return res.status(500);
+        return res.status(500).json({error: "Issue adding checked in TicketTailorTicket"});
     }
 }
 
-export default addCheckedInTicket;
+export const getCheckedInTickets = async (res: Response) => {
+    try {
+        const tickets = await TicketTailorTicket.find({checked_in: true});
+
+        return res.status(200).json({tickets});
+    } catch {
+        return res.status(500).json({error: "Issue in retrieving "});
+    }
+}
+
+export const getCheckedInNoWinTickets = async (res: Response) => {
+    try {
+        const tickets = await TicketTailorTicket.find({checked_in: true, won: false});
+
+        return res.status(200).json({tickets});
+    } catch {
+        return res.status(500).json({error: "Issue in retrieving "});
+    }
+}
+
+export const updateWinner = async(req: Request, res: Response) => {
+    try {
+        const { ticketTailorId } = req.body;
+
+        await TicketTailorTicket.updateOne(
+            { ticketTailorId: ticketTailorId },
+            {  won: true }
+        );
+        
+        return res.status(200).json({message: "Winner set successfully"});
+    } catch {
+        return res.status(500).json({error: "Issue in setting winner"});
+    }
+}

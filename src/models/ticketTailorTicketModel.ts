@@ -7,6 +7,7 @@ export interface ITicketTailorTicket extends Document {
     email: string;
     checked_in: boolean;
     raffle_slot: number; //comes from custom_questions field in Ticket Tailor
+    won: boolean; //checks if the ticket has won something from the raffle yet
 }
 
 const TicketTailorTicketSchema: Schema<ITicketTailorTicket> = new Schema ({
@@ -15,7 +16,8 @@ const TicketTailorTicketSchema: Schema<ITicketTailorTicket> = new Schema ({
     full_name: {type: String, required: true},
     email: {type: String, required: true},
     checked_in: {type: Boolean, required: true, default: false},
-    raffle_slot: {type: Number, required: true} 
+    raffle_slot: {type: Number, required: true},
+    won: {type: Boolean, required: true, default: false}
 })
 
 TicketTailorTicketSchema.index({ eventId: 1, checked_in: 1 });
