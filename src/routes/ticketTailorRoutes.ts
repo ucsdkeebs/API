@@ -4,8 +4,8 @@ import requireAdmin from '../middlewares/adminMiddleware'
 
 const router = Router();
 
-router.post('/update-winner/:adminId', requireAdmin, updateWinner);
-router.get('/get-checked-in-no-win/:adminId', requireAdmin, getCheckedInNoWinTickets);
-router.get('/get-checked-in/:adminId', requireAdmin, getCheckedInTickets);
+router.post('/update-winner', requireAdmin, updateWinner);
+router.get('/get-checked-in-no-win', requireAdmin, getCheckedInNoWinTickets);
+router.get('/get-checked-in', requireAdmin, getCheckedInTickets);
 
 export default router;

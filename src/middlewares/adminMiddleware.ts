@@ -7,7 +7,8 @@ interface UserRequest extends Request {
     };
 }
 
-export function requireAdmin(req: UserRequest, res: Response, next: Function) {
+export function requireAdmin(req: UserRequest, res: Response, next: NextFunction) {
+    console.log('req.user:', req.user)
     if (!req.user?.admin) {
         return res.status(403).json({ error: "Admins only" });
     }
