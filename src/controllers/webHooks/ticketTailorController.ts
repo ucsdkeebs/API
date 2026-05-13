@@ -10,6 +10,8 @@ const parseRaffleSlot = (payload: any): number | null => {
         return null;
     }
 
+    console.log(JSON.stringify(customQuestions[0]));
+
     const opportunityQuestion = customQuestions.find((question: any) =>
         typeof question?.question === "string" &&
         question.question.toLowerCase().includes("opportunity")
