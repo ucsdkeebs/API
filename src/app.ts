@@ -15,12 +15,15 @@ import errorHandler from './middlewares/errorHandler';
 import session from 'express-session';
 import mongoose from 'mongoose';
 
+import cookieParser from 'cookie-parser';
 
 //mongodb
 import connectDB from './config/db';
 
 //firebase
 import './config/firebaseConfig';
+
+import { populateAppUser } from './middlewares/populateUserMiddleware';
 
 dotenv.config();
 
@@ -37,6 +40,9 @@ app.use(express.json({
 }));
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.use(cookieParser());
+app.use(populateAppUser);    
 
 //mounts routes to prefix
 app.use('/api/users', userRoutes);
