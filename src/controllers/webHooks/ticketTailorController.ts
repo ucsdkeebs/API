@@ -14,7 +14,7 @@ const parseRaffleSlot = (payload: any): number | null => {
 
     const opportunityQuestion = customQuestions.find((question: any) =>
         typeof question?.question === "string" &&
-        question.question.toLowerCase().includes("opportunity")
+        (question.question.toLowerCase().includes("opportunity") || question.question.toLowerCase().includes("raffle"))
     );
 
     if (!opportunityQuestion || typeof opportunityQuestion.answer !== "string") {

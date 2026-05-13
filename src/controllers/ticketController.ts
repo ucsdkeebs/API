@@ -34,13 +34,14 @@ export const createTicket = async (
 
   // Checks in ticket for event
   export const checkInTicket = async (req: Request, res: Response) => {
-    const { ticketId, adminId } = req.params;
+    //const { ticketId, adminId } = req.params;
+    const { ticketId } = req.params;
   
     try {
-      const user = await User.findById(adminId);
-      if (!user || !user.admin) {
-        return res.status(403).json({ error: 'Unauthorized. Admin access required.' });
-      }
+      // const user = await User.findById(adminId);
+      // if (!user || !user.admin) {
+      //   return res.status(403).json({ error: 'Unauthorized. Admin access required.' });
+      // }
   
       const ticket = await Ticket.findById(ticketId);
       if (!ticket) {
@@ -58,13 +59,13 @@ export const createTicket = async (
 
 // Get all tickets (admin-only)
 export const getAllTickets = async (req: Request, res: Response) => {
-  const { adminId } = req.params;
+  // const { adminId } = req.params;
 
   try {
-    const user = await User.findById(adminId);
-    if (!user || !user.admin) {
-      return res.status(403).json({ error: 'Unauthorized. Admin access required.' });
-    }
+    // const user = await User.findById(adminId);
+    // if (!user || !user.admin) {
+    //   return res.status(403).json({ error: 'Unauthorized. Admin access required.' });
+    // }
 
     const tickets = await Ticket.find()
       .populate({ path: "eventId", select: "name" })
