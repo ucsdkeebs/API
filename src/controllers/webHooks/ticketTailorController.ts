@@ -67,7 +67,7 @@ export const addCheckedInTicket = async (req: Request, res: Response) => {
     }
 }
 
-export const getCheckedInTickets = async (res: Response) => {
+export const getCheckedInTickets = async (req: Request, res: Response) => {
     try {
         const tickets = await TicketTailorTicket.find({checked_in: true});
 
@@ -77,7 +77,7 @@ export const getCheckedInTickets = async (res: Response) => {
     }
 }
 
-export const getCheckedInNoWinTickets = async (res: Response) => {
+export const getCheckedInNoWinTickets = async (req: Request, res: Response) => {
     try {
         const tickets = await TicketTailorTicket.find({checked_in: true, won: false});
 
