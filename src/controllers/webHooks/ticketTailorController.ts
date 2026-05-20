@@ -107,7 +107,7 @@ export const updateWinner = async(req: Request, res: Response) => {
 export const getCheckedInByRaffleSlot = async (req: Request, res: Response) => {
     try {
         const { raffleSlot } = req.body;
-        const tickets = await TicketTailorTicket.find({checked_in: true, raffle_slot: raffleSlot});
+        const tickets = await TicketTailorTicket.find({checked_in: true, raffle_slot: raffleSlot, won: false});
 
         return res.status(200).json({tickets});
     } catch {
