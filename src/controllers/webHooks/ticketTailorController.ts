@@ -103,3 +103,14 @@ export const updateWinner = async(req: Request, res: Response) => {
         return res.status(500).json({error: "Issue in setting winner"});
     }
 }
+
+export const getCheckedInByRaffleSlot = async (req: Request, res: Response) => {
+    try {
+        const { raffleSlot } = req.body;
+        const tickets = await TicketTailorTicket.find({checked_in: true, raffle_slot: raffleSlot});
+
+        return res.status(200).json({tickets});
+    } catch {
+        return res.status(500).json({error: "Issue in retrieving by Raffle Slot "});
+    }
+}
