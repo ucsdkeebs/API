@@ -91,7 +91,7 @@ export const getCheckedInNoWinTickets = async (req: Request, res: Response) => {
 
 export const updateWinner = async(req: Request, res: Response) => {
     try {
-        const { ticketTailorId } = req.body;
+        const { ticketTailorId } = req.params;
 
         await TicketTailorTicket.updateOne(
             { ticketTailorId: ticketTailorId },
