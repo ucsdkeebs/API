@@ -106,8 +106,14 @@ export const updateWinner = async(req: Request, res: Response) => {
 
 export const getCheckedInByRaffleSlot = async (req: Request, res: Response) => {
     try {
-        const { raffleSlot } = req.body;
+        const raffleSlot = Number(req.query.raffleSlot);
         const tickets = await TicketTailorTicket.find({checked_in: true, raffle_slot: raffleSlot, won: false});
+
+        //if (raffleSlot == 1) {
+        //    const nullTickets = await TicketTailorTicket.find({checked_in: true, raffle_slot: null, won: false});
+        //    // not sure if this will work
+        //    return res.status(200).json({tickets, nullTickets});
+        //}
 
         return res.status(200).json({tickets});
     } catch {
