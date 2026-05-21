@@ -93,13 +93,18 @@ export const updateWinner = async(req: Request, res: Response) => {
     try {
         const { ticketTailorId } = req.params;
 
-        await TicketTailorTicket.updateOne(
+        const result = await TicketTailorTicket.updateOne(
             { ticketTailorId: ticketTailorId },
             {  won: true }
         );
+
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ error: "Ticket not found" });
+        }
         
         return res.status(200).json({message: "Winner set successfully"});
-    } catch {
+    } catch (err) {
+        console.error(err);
         return res.status(500).json({error: "Issue in setting winner"});
     }
 }
