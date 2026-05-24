@@ -112,7 +112,7 @@ export const updateWinner = async(req: Request, res: Response) => {
 export const getCheckedInByRaffleSlot = async (req: Request, res: Response) => {
     try {
         const raffleSlot = Number(req.query.raffleSlot);
-        const tickets = await TicketTailorTicket.find({checked_in: true, raffle_slot: raffleSlot, won: false});
+        const tickets = await TicketTailorTicket.find({checked_in: true, eventId: process.env.EVENT_ID, raffle_slot: raffleSlot, won: false});
 
         //if (raffleSlot == 1) {
         //    const nullTickets = await TicketTailorTicket.find({checked_in: true, raffle_slot: null, won: false});
