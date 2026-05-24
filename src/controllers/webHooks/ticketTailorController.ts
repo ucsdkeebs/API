@@ -81,7 +81,7 @@ export const getCheckedInTickets = async (req: Request, res: Response) => {
 
 export const getCheckedInNoWinTickets = async (req: Request, res: Response) => {
     try {
-        const tickets = await TicketTailorTicket.find({checked_in: true, won: false});
+        const tickets = await TicketTailorTicket.find({checked_in: true, eventId: process.env.EVENT_ID, won: false});
 
         return res.status(200).json({tickets});
     } catch {
