@@ -52,15 +52,19 @@ export const addCheckedInTicket = async (req: Request, res: Response) => {
         await TicketTailorTicket.updateOne(
             { ticketTailorId: ticketId },
             {
-                ticketTailorId: ticketId,
-                eventId: payload.event_id,
-                email: payload.email,
-                full_name: payload.full_name,
-                checked_in: payload.checked_in,
-                raffle_slot: parseRaffleSlot(payload),
-                won: false
+                $set: {
+                    eventId: payload.event_id,
+                    email: payload.email,
+                    full_name: payload.full_name,
+                    checked_in: payload.checked_in,
+                },
+                $setOnInsert: {
+                    ticketTailorId: ticketId,
+                    raffle_slot: parseRaffleSlot(payload),
+                    won: false,
+                }
             },
-            {upsert: true}
+            { upsert: true }
         );
 
         return res.status(200);
