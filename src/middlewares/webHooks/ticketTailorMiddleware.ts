@@ -12,6 +12,14 @@ export function ticketTailorWebhookAuth(req: any, res: any, next: any) {
     const header = req.get("TicketTailor-Webhook-Signature");
     const secret = process.env.TICKETTAILOR_WEBHOOK_SECRET;
 
+    console.log("Webhook debug:", {
+        hasRawBody: typeof req.rawBody,
+        rawBodyLength: req.rawBody?.length,
+        header: req.get("TicketTailor-Webhook-Signature"),
+        hasSecret: Boolean(process.env.TICKETTAILOR_WEBHOOK_SECRET),
+        secretLength: process.env.TICKETTAILOR_WEBHOOK_SECRET?.length,
+      });
+
     const result = verifyTicketTailorSignature({
         rawBody: req.rawBody,
         signatureHeader: header,
