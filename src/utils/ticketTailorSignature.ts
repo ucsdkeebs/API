@@ -29,18 +29,42 @@ export function verifyTicketTailorSignature(opts: {
   const { rawBody, signatureHeader, secret } = opts;
   const toleranceSeconds = opts.toleranceSeconds ?? time_limit;
 
+  console.log("[TT-SIG] verify start", {
+    hasSecret: !!secret,
+    secretLength: secret?.length ?? 0,
+    secretPrefix: secret ? secret.slice(0, 4) : null,
+    hasSignatureHeader: !!signatureHeader,
+    signatureHeaderRaw: signatureHeader ?? null,
+    rawBodyType: typeof rawBody,
+    rawBodyLength: rawBody?.length ?? 0,
+    toleranceSeconds,
+  });
+
   if (!secret) return { ok: false, reason: "Missing webhook secret" };
   if (!signatureHeader) return { ok: false, reason: "Missing signature header" };
 
   const data = parseTicketTailorSignatureHeader(signatureHeader);
-  if (!data) return { ok: false, reason: "Invalid signature header" };
+  if (!data) {
+    console.log("[TT-SIG] failed to parse signature header", { signatureHeader });
+    return { ok: false, reason: "Invalid signature header" };
+  }
 
   const { timestamp, signature } = data;
+  console.log("[TT-SIG] parsed header", {
+    timestamp,
+    signatureLength: signature.length,
+    signaturePrefix: signature.slice(0, 8),
+  });
 
   const now = Math.floor(Date.now() / 1000); // converts to utc seconds
   const ts = Number(timestamp);
-  if (!Number.isFinite(ts)) return { ok: false, reason: "Invalid timestamp" };
-  if (Math.abs(now - ts) > toleranceSeconds) return { ok: false, reason: "Signature timestamp too old/new" };
+  if (!Number.isFinite(ts)) {
+    console.log("[TT-SIG] timestamp not finite", { timestamp });
+    return { ok: false, reason: "Invalid timestamp" };
+  }
+  const drift = now - ts;
+  console.log("[TT-SIG] timestamp check", { now, ts, driftSeconds: drift, toleranceSeconds });
+  if (Math.abs(drift) > toleranceSeconds) return { ok: false, reason: "Signature timestamp too old/new" };
 
   const signedPayload = `${timestamp}${rawBody}`;
 
@@ -49,14 +73,24 @@ export function verifyTicketTailorSignature(opts: {
     .update(signedPayload, "utf8")
     .digest("hex");
 
+  console.log("[TT-SIG] hmac computed", {
+    signedPayloadLength: signedPayload.length,
+    expectedLength: expected.length,
+    expectedPrefix: expected.slice(0, 8),
+    receivedPrefix: signature.slice(0, 8),
+    lengthsMatch: expected.length === signature.length,
+  });
+
   try {
     const recieved  = Buffer.from(expected, "utf8");
     const sign = Buffer.from(signature, "utf8");
     if (recieved.length !== sign.length) return { ok: false, reason: "Signature length mismatch" };
 
     const match = crypto.timingSafeEqual(recieved, sign);
+    console.log("[TT-SIG] comparison result", { match });
     return match ? { ok: true } : { ok: false, reason: "Signature mismatch" };
-  } catch {
+  } catch (err) {
+    console.log("[TT-SIG] comparison threw", { err });
     return { ok: false, reason: "Signature comparison failed" };
   }
 }
