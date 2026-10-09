@@ -11,7 +11,7 @@ import {
 
 const router = Router();
 
-router.get('/all', requireAdmin, getAllEvents);
+router.get('/all', getAllEvents);
 
 router.get('/get-active', getActiveEvents);
 
