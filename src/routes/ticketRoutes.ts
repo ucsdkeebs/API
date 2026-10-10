@@ -7,6 +7,6 @@ const router = Router();
 router.post('/create', createTicket);
 router.post('/check-in/:ticketId', requireAdmin, checkInTicket);
 router.get("/all", requireAdmin, getAllTickets);
-router.get("/:userId", getUserTickets);
+router.get("/:userId", requireAdmin, getUserTickets);
 
 export default router;

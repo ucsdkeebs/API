@@ -15,7 +15,7 @@ router.get('/all', getAllEvents);
 
 router.get('/get-active', getActiveEvents);
 
-router.post('/get-user-tickets', requireAdmin, getUserTicketsForEvent);
+router.post('/get-user-tickets', getUserTicketsForEvent);
 
 router.post('/create-event', requireAdmin, createEvent);
 
