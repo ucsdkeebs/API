@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import requireAdmin from '../middlewares/adminMiddleware'
 
 import {
     getAllEvents,
@@ -16,7 +17,7 @@ router.get('/get-active', getActiveEvents);
 
 router.post('/get-user-tickets', getUserTicketsForEvent);
 
-router.post('/create-event', createEvent);
+router.post('/create-event', requireAdmin, createEvent);
 
 router.post('/:eventId/rsvp', rsvpToEvent);
 

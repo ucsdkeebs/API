@@ -1,12 +1,13 @@
 import { Request, Response } from 'express';
 import Ticket from '../models/ticketModel';
+import User from '@/models/userModel';
 import { createTicketService } from '../services/ticketServices';
 
 //Create Ticket handles only the http response, actual ticket creation logic delegated to services
 export const createTicket = async (
   req: Request, res: Response
 ) => {
-    const { ownerId, eventId, first_name, last_name, keyboards, gender_identity, from_where, expected_spend, checked_in } = req.body;
+    const { ownerId, eventId, first_name, last_name, keyboards, gender_identity, from_where, expected_spend, checked_in, won } = req.body;
     try {
       const ticket = await createTicketService(
         ownerId, 
@@ -19,7 +20,8 @@ export const createTicket = async (
           gender_identity, 
           from_where, 
           expected_spend, 
-          checked_in 
+          checked_in,
+          won 
         },
         //keyboards
       );
@@ -29,3 +31,68 @@ export const createTicket = async (
       res.status(500).json({ error: 'Error creating ticket' });
     }
   };
+
+  // Checks in ticket for event
+  export const checkInTicket = async (req: Request, res: Response) => {
+    //const { ticketId, adminId } = req.params;
+    const { ticketId } = req.params;
+  
+    try {
+      // const user = await User.findById(adminId);
+      // if (!user || !user.admin) {
+      //   return res.status(403).json({ error: 'Unauthorized. Admin access required.' });
+      // }
+  
+      const ticket = await Ticket.findById(ticketId);
+      if (!ticket) {
+        return res.status(404).json({ error: 'Ticket not found' });
+      }
+  
+      ticket.checked_in = true;
+      await ticket.save();
+  
+      res.status(200).json({ message: 'User checked in successfully', ticket });
+    } catch (error) {
+      res.status(500).json({ error: 'Error checking in user' });
+    }
+  };
+
+// Get all tickets (admin-only)
+export const getAllTickets = async (req: Request, res: Response) => {
+  // const { adminId } = req.params;
+
+  try {
+    // const user = await User.findById(adminId);
+    // if (!user || !user.admin) {
+    //   return res.status(403).json({ error: 'Unauthorized. Admin access required.' });
+    // }
+
+    const tickets = await Ticket.find()
+      .populate({ path: "eventId", select: "name" })
+      .populate({ path: "ownerId", select: "email" });
+      
+    res.status(200).json({ tickets });
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching tickets' });
+  }
+};
+
+// Get ticket based on user id
+export const getUserTickets = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const tickets = await Ticket.find({ ownerId: userId })
+      .populate({ path: "eventId", select: "name" })
+      .populate({ path: "ownerId", select: "email" });
+
+    res.status(200).json({ tickets });
+  } catch (error) {
+    res.status(500).json({ error: 'Error retrieving tickets' });
+  }
+};
